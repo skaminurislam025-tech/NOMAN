@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#155eef">
+  <title>Maa Hazra Enterprise</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <div><div class="brand">Maa Hazra Enterprise</div><small data-i18n="subtitle">Sales & Inventory Management</small></div>
+  <button id="langBtn" class="outline">বাংলা</button>
+</header>
+<div class="layout">
+  <nav class="sidebar">
+    <button class="nav active" data-page="dashboard" data-i18n="dashboard">Dashboard</button>
+    <button class="nav" data-page="products" data-i18n="products">Products</button>
+    <button class="nav" data-page="sales" data-i18n="sales">Sales Entry</button>
+    <button class="nav" data-page="purchases" data-i18n="purchases">Purchase Entry</button>
+    <button class="nav" data-page="reports" data-i18n="reports">Reports</button>
+    <button class="nav" data-page="backup" data-i18n="backup">Backup & Restore</button>
+  </nav>
+  <main>
+    <section id="dashboard" class="page show">
+      <h1 data-i18n="dashboard">Dashboard</h1>
+      <div class="cards">
+        <article class="card"><span data-i18n="totalSales">Total Sales</span><strong id="totalSales">₹0.00</strong></article>
+        <article class="card"><span data-i18n="totalPurchase">Total Purchase</span><strong id="totalPurchase">₹0.00</strong></article>
+        <article class="card"><span data-i18n="stockItems">Stock Items</span><strong id="stockItems">0</strong></article>
+        <article class="card"><span data-i18n="estimatedProfit">Estimated Gross Profit</span><strong id="profit">₹0.00</strong></article>
+      </div>
+      <div class="panel"><h2 data-i18n="quickStart">Quick start</h2><p data-i18n="quickText">Add products first, then record purchases and sales. Stock updates automatically.</p></div>
+      <p class="hint" data-i18n="offlineNote">Offline-ready: entries are saved on this device. Use Backup regularly.</p>
+    </section>
+
+    <section id="products" class="page">
+      <h1 data-i18n="products">Products</h1>
+      <form id="productForm" class="formgrid">
+        <input id="pName" required placeholder="Product name">
+        <input id="pCategory" placeholder="Category">
+        <input id="pCost" type="number" min="0" step="0.01" required placeholder="Purchase price">
+        <input id="pPrice" type="number" min="0" step="0.01" required placeholder="Selling price">
+        <button class="primary" data-i18n="addProduct">Add Product</button>
+      </form>
+      <div class="tablewrap"><table><thead><tr><th data-i18n="product">Product</th><th data-i18n="category">Category</th><th data-i18n="cost">Cost</th><th data-i18n="price">Price</th><th data-i18n="stock">Stock</th></tr></thead><tbody id="productRows"></tbody></table></div>
+    </section>
+
+    <section id="sales" class="page">
+      <h1 data-i18n="sales">Sales Entry</h1>
+      <form id="saleForm" class="formgrid">
+        <select id="saleProduct" required></select>
+        <input id="saleQty" type="number" min="1" step="1" required placeholder="Quantity">
+        <input id="saleCustomer" placeholder="Customer name (optional)">
+        <button class="primary" data-i18n="saveSale">Save Sale</button>
+      </form>
+      <p class="hint" data-i18n="saleHint">Sales reduce stock. A sale cannot be saved if stock is insufficient.</p>
+      <div class="tablewrap"><table><thead><tr><th data-i18n="date">Date</th><th data-i18n="product">Product</th><th data-i18n="quantity">Qty</th><th data-i18n="amount">Amount</th></tr></thead><tbody id="saleRows"></tbody></table></div>
+    </section>
+
+    <section id="purchases" class="page">
+      <h1 data-i18n="purchases">Purchase Entry</h1>
+      <form id="purchaseForm" class="formgrid">
+        <select id="purchaseProduct" required></select>
+        <input id="purchaseQty" type="number" min="1" step="1" required placeholder="Quantity">
+        <input id="purchaseCost" type="number" min="0" step="0.01" placeholder="Unit purchase price (optional)">
+        <button class="primary" data-i18n="savePurchase">Save Purchase</button>
+      </form>
+      <p class="hint" data-i18n="purchaseHint">Purchases increase stock.</p>
+      <div class="tablewrap"><table><thead><tr><th data-i18n="date">Date</th><th data-i18n="product">Product</th><th data-i18n="quantity">Qty</th><th data-i18n="amount">Amount</th></tr></thead><tbody id="purchaseRows"></tbody></table></div>
+    </section>
+
+    <section id="reports" class="page">
+      <h1 data-i18n="reports">Reports</h1>
+      <div class="panel"><p id="reportSummary"></p><button id="csvBtn" class="primary" data-i18n="exportCsv">Export Transactions CSV</button></div>
+    </section>
+
+    <section id="backup" class="page">
+      <h1 data-i18n="backup">Backup & Restore</h1>
+      <div class="panel"><p data-i18n="backupText">Download a JSON backup of products and transactions. Keep it somewhere safe.</p><button id="backupBtn" class="primary" data-i18n="downloadBackup">Download Backup</button>
+      <label class="filelabel"><span data-i18n="restoreBackup">Restore Backup</span><input type="file" id="restoreFile" accept="application/json"></label></div>
+    </section>
+  </main>
+</div>
+<footer>© <span id="year"></span> Maa Hazra Enterprise</footer>
+<script src="app.js"></script>
+</body></html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GST Invoice - Maa Hazra Enterprise</title>
+<style>
+:root{--bl:#1f5fd6;--ink:#17233b;--line:#cfd9ec;--bg:#eef3fb}
+*{box-sizing:border-box}
+body{margin:0;font:14px/1.45 "Segoe UI",Arial,sans-serif;color:var(--ink);background:var(--bg)}
+header{background:var(--bl);color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+header h1{font-size:18px;margin:0}
+.wrap{max-width:900px;margin:0 auto;padding:12px}
+.panel{background:#fff;border:1px solid var(--line);border-radius:8px;padding:12px;margin-bottom:12px}
+.panel h2{font-size:15px;margin:0 0 8px}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px}
+label{display:block;font-size:12px;color:#51607d}
+input,select,textarea{width:100%;padding:7px;border:1px solid var(--line);border-radius:5px;font:inherit;background:#fff;color:var(--ink)}
+button{background:var(--bl);color:#fff;border:0;border-radius:6px;padding:9px 14px;font:inherit;cursor:pointer}
+button.alt{background:#fff;color:var(--bl);border:1px solid var(--bl)}
+button.x{background:#fff;color:#b3261e;border:1px solid #e3b5b1;padding:6px 9px}
+.items{overflow-x:auto}
+.items table{border-collapse:collapse;min-width:640px;width:100%}
+.items td{padding:3px}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+/* invoice sheet */
+#sheet{background:#fff;border:1px solid var(--line);padding:18px;color:#000;overflow-x:auto}
+#sheet .top{display:flex;justify-content:space-between;gap:12px;border-bottom:2px solid var(--bl);padding-bottom:8px;flex-wrap:wrap}
+#sheet h3{margin:0;font-size:20px;color:var(--bl)}
+#sheet .meta{text-align:right}
+#sheet .two{display:flex;gap:12px;margin:10px 0;flex-wrap:wrap}
+#sheet .two div{flex:1;min-width:220px;border:1px solid var(--line);padding:8px;border-radius:4px}
+#sheet table{width:100%;border-collapse:collapse;font-size:13px}
+#sheet th,#sheet td{border:1px solid #9fb0d0;padding:4px 6px}
+#sheet th{background:#e6eefc}
+.r{text-align:right}.c{text-align:center}
+#sheet .tot{margin-left:auto;width:min(320px,100%);margin-top:8px}
+#sheet .tot td{border:0;border-bottom:1px solid var(--line)}
+#sheet .grand td{font-weight:700;font-size:15px;border-top:2px solid var(--bl)}
+#sheet .foot{display:flex;justify-content:space-between;gap:12px;margin-top:14px;flex-wrap:wrap;font-size:12px}
+@media print{
+ @page{size:A4;margin:10mm}
+ body{background:#fff}
+ header,.panel,.bar,.noprint{display:none!important}
+ .wrap{max-width:none;padding:0}
+ #sheet{border:0;padding:0}
+}
+</style></head><body>
+<header><h1>GST Invoice</h1><div><button class="alt" onclick="newInv()">New invoice</button> <button class="alt" onclick="window.print()">Save as PDF / Print</button></div></header>
+<div class="wrap">
+
+<div class="panel"><h2>Your business</h2><div class="g">
+<label>Business name<input id="sn" value="Maa Hazra Enterprise"></label>
+<label>GSTIN<input id="sg" placeholder="19XXXXXXXXXXXXX"></label>
+<label>Phone<input id="sp"></label>
+<label>Address<input id="sa" value="Jairur More, Nandigram, Purba Medinipur, West Bengal"></label>
+</div></div>
+
+<div class="panel"><h2>Invoice and customer</h2><div class="g">
+<label>Invoice no.<input id="no"></label>
+<label>Date<input id="dt" type="date"></label>
+<label>Customer name<input id="bn"></label>
+<label>Customer phone<input id="bp"></label>
+<label>Customer GSTIN (optional)<input id="bg"></label>
+<label>Customer address<input id="ba"></label>
+<label>Tax type<select id="tt"><option value="in">Same state: CGST + SGST</option><option value="out">Other state: IGST</option></select></label>
+</div></div>
+
+<div class="panel"><h2>Items</h2>
+<div class="items"><table><thead><tr><td>Item</td><td>HSN</td><td>Qty</td><td>Unit</td><td>Rate</td><td>GST %</td><td></td></tr></thead><tbody id="rows"></tbody></table></div>
+<div class="bar"><button onclick="addRow()">Add item</button></div>
+<label style="margin-top:8px">Note (optional)<input id="nt" placeholder="e.g. Thank you for your business"></label>
+</div>
+
+<div id="sheet"></div>
+<p class="noprint" style="font-size:12px;color:#51607d">To save a PDF: tap Save as PDF / Print, then choose "Save as PDF" as the printer.</p>
+</div>
+<script>
+var $=function(i){return document.getElementById(i)};
+function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}catch(e){return null}}
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function inr(n){return n.toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2})}
+function words(n){
+ var a="One Two Three Four Five Six Seven Eight Nine Ten Eleven Twelve Thirteen Fourteen Fifteen Sixteen Seventeen Eighteen Nineteen".split(" "),
+ b="Twenty Thirty Forty Fifty Sixty Seventy Eighty Ninety".split(" ");
+ function t(x){var s="";if(x>99){s+=a[Math.floor(x/100)-1]+" Hundred ";x%=100}
+  if(x>19){s+=b[Math.floor(x/10)-2]+" ";x%=10}if(x>0)s+=a[x-1]+" ";return s}
+ var r=Math.round(n),p=Math.round((n-r)*100);if(r<0)r=0;
+ if(r===0)return"Zero Rupees Only";
+ var o="",cr=Math.floor(r/1e7),lk=Math.floor(r%1e7/1e5),th=Math.floor(r%1e5/1e3),h=r%1e3;
+ if(cr)o+=t(cr)+"Crore ";if(lk)o+=t(lk)+"Lakh ";if(th)o+=t(th)+"Thousand ";if(h)o+=t(h);
+ return o.trim()+" Rupees Only"}
+function addRow(v){
+ v=v||{};var tr=document.createElement("tr");
+ tr.innerHTML='<td><input class="i" value="'+esc(v.n)+'" style="min-width:150px"></td><td><input class="h" value="'+esc(v.h)+'" style="width:80px"></td><td><input class="q" type="number" min="0" step="any" value="'+(v.q||1)+'" style="width:70px"></td><td><input class="u" value="'+esc(v.u||"Pcs")+'" style="width:60px"></td><td><input class="p" type="number" min="0" step="any" value="'+(v.p||"")+'" style="width:90px"></td><td><input class="t" type="number" min="0" step="any" value="'+(v.t==null?18:v.t)+'" style="width:70px"></td><td><button class="x" onclick="this.closest(\'tr\').remove();render()">X</button></td>';
+ $("rows").appendChild(tr);render()}
+function render(){
+ var rows=[].slice.call($("rows").children),sub=0,gst=0,body="",k=0,intra=$("tt").value==="in",rates={};
+ rows.forEach(function(tr){
+  var n=tr.querySelector(".i").value,q=+tr.querySelector(".q").value||0,p=+tr.querySelector(".p").value||0,t=+tr.querySelector(".t").value||0;
+  if(!n&&!p)return;k++;var tx=q*p,g=tx*t/100;sub+=tx;gst+=g;rates[t]=(rates[t]||0)+g;
+  body+='<tr><td class="c">'+k+'</td><td>'+esc(n)+'</td><td>'+esc(tr.querySelector(".h").value)+'</td><td class="r">'+q+' '+esc(tr.querySelector(".u").value)+'</td><td class="r">'+inr(p)+'</td><td class="r">'+inr(tx)+'</td><td class="c">'+t+'%</td><td class="r">'+inr(g)+'</td><td class="r">'+inr(tx+g)+'</td></tr>'});
+ var raw=sub+gst,tot=Math.round(raw),ro=tot-raw,tl="";
+ if(intra)tl='<tr><td>CGST</td><td class="r">'+inr(gst/2)+'</td></tr><tr><td>SGST</td><td class="r">'+inr(gst/2)+'</td></tr>';
+ else tl='<tr><td>IGST</td><td class="r">'+inr(gst)+'</td></tr>';
+ var bg=$("bg").value?'<br>GSTIN: '+esc($("bg").value):"",sg=$("sg").value?'<br>GSTIN: <b>'+esc($("sg").value)+'</b>':"";
+ $("sheet").innerHTML='<div class="top"><div><h3>'+esc($("sn").value)+'</h3>'+esc($("sa").value)+(  $("sp").value?'<br>Phone: '+esc($("sp").value):"")+sg+'</div><div class="meta"><b style="font-size:16px">TAX INVOICE</b><br>Invoice no: <b>'+esc($("no").value)+'</b><br>Date: '+esc($("dt").value.split("-").reverse().join("/"))+'</div></div>'
+ +'<div class="two"><div><b>Bill to</b><br>'+(esc($("bn").value)||"Cash customer")+(  $("bp").value?'<br>Phone: '+esc($("bp").value):"")+(  $("ba").value?'<br>'+esc($("ba").value):"")+bg+'</div></div>'
+ +'<table><thead><tr><th>#</th><th>Item</th><th>HSN</th><th>Qty</th><th>Rate</th><th>Taxable</th><th>GST</th><th>Tax amt</th><th>Amount</th></tr></thead><tbody>'+(body||'<tr><td colspan="9" class="c">Add items above</td></tr>')+'</tbody></table>'
+ +'<table class="tot"><tr><td>Taxable value</td><td class="r">'+inr(sub)+'</td></tr>'+tl+'<tr><td>Round off</td><td class="r">'+inr(ro)+'</td></tr><tr class="grand"><td>Total</td><td class="r">&#8377; '+inr(tot)+'</td></tr></table>'
+ +'<p><b>Amount in words:</b> '+words(tot)+'</p>'+($("nt").value?'<p>'+esc($("nt").value)+'</p>':"")
+ +'<div class="foot"><div>Goods once sold will not be taken back.<br>This is a computer generated invoice.</div><div class="r">For <b>'+esc($("sn").value)+'</b><br><br><br>Authorised signatory</div></div>';
+ ls("inv_seller",JSON.stringify({n:$("sn").value,g:$("sg").value,p:$("sp").value,a:$("sa").value}))}
+function nextNo(){var n=(+ls("inv_no")||0)+1;return"INV-"+("0000"+n).slice(-5)}
+function newInv(){ls("inv_no",String((+ls("inv_no")||0)+1));$("no").value=nextNo();["bn","bp","bg","ba","nt"].forEach(function(i){$(i).value=""});$("rows").innerHTML="";addRow();window.scrollTo(0,0)}
+(function(){
+ try{var s=JSON.parse(ls("inv_seller")||"null");if(s){$("sn").value=s.n;$("sg").value=s.g;$("sp").value=s.p;$("sa").value=s.a}}catch(e){}
+ $("no").value=nextNo();$("dt").value=new Date().toISOString().slice(0,10);
+ document.addEventListener("input",render);document.addEventListener("change",render);
+ addRow()})();
+</script></body></html>

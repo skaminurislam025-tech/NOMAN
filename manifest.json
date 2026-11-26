@@ -1,0 +1,10 @@
+{
+  "name": "Maa Hazra Enterprise",
+  "short_name": "Maa Hazra",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f4f7fc",
+  "theme_color": "#155eef",
+  "description": "Sales and inventory management PWA",
+  "icons": []
+}
