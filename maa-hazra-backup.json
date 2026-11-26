@@ -1,0 +1,33 @@
+{
+  "products": [
+    {
+      "id": "289c7bdb-25c9-4cf1-a618-766648afc34e",
+      "name": "CILLING FAN",
+      "category": "ELETRONIC",
+      "cost": 1200,
+      "price": 1800
+    }
+  ],
+  "sales": [
+    {
+      "productId": "289c7bdb-25c9-4cf1-a618-766648afc34e",
+      "name": "CILLING FAN",
+      "qty": 1,
+      "price": 1800,
+      "cost": 1200,
+      "amount": 1800,
+      "customer": "AMINUR",
+      "date": "11/26/2026"
+    }
+  ],
+  "purchases": [
+    {
+      "productId": "289c7bdb-25c9-4cf1-a618-766648afc34e",
+      "name": "CILLING FAN",
+      "qty": 5,
+      "cost": 1200,
+      "amount": 6000,
+      "date": "11/26/2026"
+    }
+  ]
+}
